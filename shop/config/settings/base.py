@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     # Third-Party Packages
     'rest_framework',
     # Internal Apps
-
+    'apps.product',
 ]
 
 MIDDLEWARE = [
