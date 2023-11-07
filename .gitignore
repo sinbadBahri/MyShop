@@ -3,8 +3,9 @@ venv/
 .idea/
 .pytest_cache
 .env
-.coverage
 db.sqlite3
+.coverage
+htmlcov/
 
 
 git.txt
