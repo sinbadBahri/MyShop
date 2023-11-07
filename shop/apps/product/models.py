@@ -5,7 +5,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Category(MPTTModel):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     parent = TreeForeignKey('self', on_delete=models.PROTECT,
                             related_name="children", null=True, blank=True)
 
@@ -21,7 +21,7 @@ class Category(MPTTModel):
 
 
 class Brand(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
 
     def __str__(self) -> CharField:
         return self.title

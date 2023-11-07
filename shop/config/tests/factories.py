@@ -8,11 +8,15 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Category
 
+    title = factory.Sequence(lambda x: f"Category object {x}")
+
 
 class BrandFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Brand
+
+    title = factory.Sequence(lambda x: f"Brand object {x}")
 
 
 class ProductFactory(factory.django.DjangoModelFactory):
