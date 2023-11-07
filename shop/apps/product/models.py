@@ -9,9 +9,11 @@ class Category(MPTTModel):
     parent = TreeForeignKey('self', on_delete=models.PROTECT,
                             related_name="children", null=True, blank=True)
 
-    class MPTTMeta:
+    class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
+
+    class MPTTMeta:
         order_insertion_by = ['title']
 
     def __str__(self) -> CharField:
@@ -31,3 +33,6 @@ class Product(models.Model):
     is_digital = models.BooleanField(default=False)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="products")
     category = TreeForeignKey('Category', on_delete=models.PROTECT, related_name="products")
+
+    def __str__(self) -> CharField:
+        return self.title

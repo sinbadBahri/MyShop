@@ -7,18 +7,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('title', 'parent')
+        fields = '__all__'
 
 
 class BrandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = ('title',)
+        fields = '__all__'
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    brand = BrandSerializer()
 
     class Meta:
         model = Product
-        fields = ('title', 'description', 'is_digital', 'brand', 'category')
+        fields = '__all__'
