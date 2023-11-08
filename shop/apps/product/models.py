@@ -44,4 +44,4 @@ class ProductLine(models.Model):
     sku = models.CharField(max_length=100)
     stock_qty = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="product_lines")
-    is_active = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=False)
