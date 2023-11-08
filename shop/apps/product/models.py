@@ -4,6 +4,18 @@ from django.db.models import CharField
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+class ActiveManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).select_related(
+            'category', 'brand'
+        ).filter(is_active=True)
+
+
+class Temp(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs)
+
+
 class Category(MPTTModel):
     title = models.CharField(max_length=100, unique=True)
     parent = TreeForeignKey('self', on_delete=models.PROTECT,
@@ -34,6 +46,10 @@ class Product(models.Model):
     is_digital = models.BooleanField(default=False)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="products")
     category = TreeForeignKey('Category', on_delete=models.PROTECT, related_name="products")
+    is_active = models.BooleanField(default=False)
+
+    default_manager = models.Manager()
+    objects = ActiveManager()
 
     def __str__(self) -> CharField:
         return self.title
@@ -45,3 +61,6 @@ class ProductLine(models.Model):
     stock_qty = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="product_lines")
     is_available = models.BooleanField(default=False)
+
+    def __str__(self) -> CharField:
+        return self.sku

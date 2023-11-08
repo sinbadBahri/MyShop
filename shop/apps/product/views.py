@@ -30,12 +30,20 @@ class ProductViewSet(viewsets.ViewSet):
     lookup_field = 'slug'
 
     def retrieve(self, request, slug=None):
-        serializer = ProductSerializer(self.queryset.filter(slug=slug), many=True)
+        serializer = ProductSerializer(
+            self.queryset.filter(slug=slug),
+            many=True
+        )
+
         return Response(serializer.data)
 
     @extend_schema(responses=ProductSerializer)
     def list(self, request):
-        serializer = ProductSerializer(self.queryset, many=True)
+        serializer = ProductSerializer(
+            self.queryset,
+            many=True
+        )
+
         return Response(serializer.data)
 
     @action(
@@ -52,4 +60,5 @@ class ProductViewSet(viewsets.ViewSet):
             self.queryset.filter(category__title=category),
             many=True,
         )
+
         return Response(serializer.data)
