@@ -29,6 +29,7 @@ class Brand(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=100, verbose_name="name")
+    slug = models.SlugField(max_length=150)
     description = models.TextField(max_length=1000, blank=True)
     is_digital = models.BooleanField(default=False)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="products")
