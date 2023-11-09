@@ -51,5 +51,9 @@ class TestProductEndpoints:
         assert response.status_code == 200
         assert len(json.loads(response.content)) == 1
 
-    def test_return_products_by_category_name(self):
-        pass
+    def test_return_products_by_category_slug(self, category_factory, product_factory, api_client):
+        obj = category_factory(slug='test-slug')
+        product_factory(category=obj)
+        response = api_client().get(f"{self.endpoint}category/{obj.slug}/all/")
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 1

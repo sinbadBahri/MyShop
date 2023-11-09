@@ -6,6 +6,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from .fields import OrderField
 
+
 class ActiveManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).select_related(
@@ -15,6 +16,7 @@ class ActiveManager(models.Manager):
 
 class Category(MPTTModel):
     title = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=150)
     parent = TreeForeignKey('self', on_delete=models.PROTECT,
                             related_name="children", null=True, blank=True)
 
