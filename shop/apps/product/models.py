@@ -77,9 +77,8 @@ class ProductLine(models.Model):
 
 
 class ProductImage(models.Model):
-    title = models.CharField(max_length=100)
     alternative_text = models.CharField(max_length=100)
-    url = models.ImageField(upload_to=None)
+    url = models.ImageField(upload_to=None, default='text.jpg')
     product_line = models.ForeignKey(ProductLine, on_delete=models.CASCADE,
                                      related_name="product_images")
     order = OrderField(unique_for_field='product_line', blank=True)
@@ -94,5 +93,5 @@ class ProductImage(models.Model):
         self.full_clean()
         return super(ProductImage, self).save(*args, **kwargs)
 
-    def __str__(self) -> CharField:
-        return self.title
+    def __str__(self) -> str:
+        return str(self.url)
