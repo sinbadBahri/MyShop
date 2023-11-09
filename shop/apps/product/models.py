@@ -1,19 +1,16 @@
 from django.db import models
 from django.db.models import CharField
+from django.core.exceptions import ValidationError
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from .fields import OrderField
 
 class ActiveManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).select_related(
             'category', 'brand'
         ).filter(is_active=True)
-
-
-class Temp(models.Manager):
-    def get_queryset(self, *args, **kwargs):
-        return super().get_queryset(*args, **kwargs)
 
 
 class Category(MPTTModel):
@@ -56,11 +53,19 @@ class Product(models.Model):
 
 
 class ProductLine(models.Model):
-    price = models.IntegerField()
+    price = models.PositiveIntegerField()
     sku = models.CharField(max_length=100)
     stock_qty = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="product_lines")
     is_available = models.BooleanField(default=False)
+    order = OrderField(unique_for_field='product', blank=True)
 
-    def __str__(self) -> CharField:
-        return self.sku
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        qs = ProductLine.objects.filter(product=self.product)
+        for obj in qs:
+            if self.id != obj.id and self.order == obj.order:
+                raise ValidationError("Duplicate value !!!")
+
+    def __str__(self) -> str:
+        return str(self.order)
