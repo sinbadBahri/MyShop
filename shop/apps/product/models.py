@@ -58,11 +58,17 @@ class Attribute(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=700, blank=True)
 
+    def __str__(self) -> CharField:
+        return self.title
+
 
 class AttributeValue(models.Model):
     attribute_value = models.CharField(max_length=100)
-    product_attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,
-                                          related_name="attribute_values")
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,
+                                  related_name="attribute_values")
+
+    def __str__(self) -> str:
+        return f"{self.attribute}:  {self.attribute_value}"
 
 
 class ProductLine(models.Model):
@@ -72,9 +78,8 @@ class ProductLine(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="product_lines")
     is_available = models.BooleanField(default=False)
     order = OrderField(unique_for_field='product', blank=True)
-    attribute_values = models.ManyToManyField(
-        AttributeValue, through='ProductLineAttributeValue'
-    )
+    attribute_values = models.ManyToManyField(AttributeValue, through='ProductLineAttributeValue',
+                                              related_name="product_line_attribute_value")
 
     def clean(self):
         qs = ProductLine.objects.filter(product=self.product)
