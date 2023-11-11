@@ -78,7 +78,7 @@ class ProductLine(models.Model):
 
 class ProductImage(models.Model):
     alternative_text = models.CharField(max_length=100)
-    url = models.ImageField(upload_to=None, default='text.jpg')
+    url = models.ImageField(upload_to=None)
     product_line = models.ForeignKey(ProductLine, on_delete=models.CASCADE,
                                      related_name="product_images")
     order = OrderField(unique_for_field='product_line', blank=True)

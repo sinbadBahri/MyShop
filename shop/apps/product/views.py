@@ -1,3 +1,5 @@
+from django.db.models import Prefetch
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -12,7 +14,10 @@ class CategoryViewSet(viewsets.ViewSet):
 
     @extend_schema(responses=CategorySerializer)
     def list(self, request) -> Response:
-        serializer = CategorySerializer(self.queryset, many=True)
+        serializer = CategorySerializer(
+            self.queryset,
+            many=True,
+        )
         return Response(serializer.data)
 
 
@@ -32,10 +37,13 @@ class ProductViewSet(viewsets.ViewSet):
     def retrieve(self, request, slug=None):
         serializer = ProductSerializer(
             self.queryset.filter(slug=slug),
-            many=True
+            many=True,
         )
-
-        return Response(serializer.data)
+        from django.db import connection
+        temp = Response(serializer.data)
+        qs = list(connection.queries)
+        print(len(qs))
+        return temp
 
     @extend_schema(responses=ProductSerializer)
     def list(self, request):
