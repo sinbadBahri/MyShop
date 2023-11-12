@@ -44,9 +44,13 @@ class Product(models.Model):
     title = models.CharField(max_length=100, verbose_name="name")
     slug = models.SlugField(max_length=150)
     description = models.TextField(max_length=1000, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE,
+                              related_name="products")
+    category = TreeForeignKey('Category', on_delete=models.PROTECT,
+                              related_name="products")
+    product_type = models.ForeignKey('ProductType', on_delete=models.RESTRICT,
+                                     related_name="products")
     is_digital = models.BooleanField(default=False)
-    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name="products")
-    category = TreeForeignKey('Category', on_delete=models.PROTECT, related_name="products")
     is_active = models.BooleanField(default=False)
 
     default_manager = models.Manager()
@@ -82,8 +86,6 @@ class ProductLine(models.Model):
     order = OrderField(unique_for_field='product', blank=True)
     attribute_values = models.ManyToManyField(AttributeValue, through='ProductLineAttributeValue',
                                               related_name="product_line_attribute_values")
-    product_types = models.ForeignKey('ProductType', on_delete=models.RESTRICT,
-                                      related_name="product_lines")
 
     def clean(self) -> Any:
         qs = ProductLine.objects.filter(product=self.product)
