@@ -31,7 +31,7 @@ class AttributeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attribute
-        fields = ('title',)
+        fields = ('title', 'id')
 
 
 class AttributeValueSerializer(serializers.ModelSerializer):
@@ -56,6 +56,16 @@ class ProductLineSerializer(serializers.ModelSerializer):
             'product_images',
             'attribute_values',
         )
+        
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        attr_value_data = data.pop('attribute_values')
+        attr_values = {}
+        for key in attr_value_data:
+            attr_values.update({key['attribute']['title']: key['attribute_value']})
+
+        data.update({'specifications': attr_values})
+        return data
 
 
 class ProductSerializer(serializers.ModelSerializer):
