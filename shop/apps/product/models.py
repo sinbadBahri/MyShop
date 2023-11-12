@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db import models
 from django.db.models import CharField
 from django.core.exceptions import ValidationError
@@ -8,7 +10,7 @@ from .fields import OrderField
 
 
 class ActiveManager(models.Manager):
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs) -> Any:
         return super().get_queryset(*args, **kwargs).select_related(
             'category', 'brand'
         ).filter(is_active=True)
@@ -79,15 +81,17 @@ class ProductLine(models.Model):
     is_available = models.BooleanField(default=False)
     order = OrderField(unique_for_field='product', blank=True)
     attribute_values = models.ManyToManyField(AttributeValue, through='ProductLineAttributeValue',
-                                              related_name="product_line_attribute_value")
+                                              related_name="product_line_attribute_values")
+    product_types = models.ForeignKey('ProductType', on_delete=models.RESTRICT,
+                                      related_name="product_lines")
 
-    def clean(self):
+    def clean(self) -> Any:
         qs = ProductLine.objects.filter(product=self.product)
         for obj in qs:
             if self.id != obj.id and self.order == obj.order:
                 raise ValidationError("Duplicate value !!!")
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         return super(ProductLine, self).save(*args, **kwargs)
 
@@ -112,15 +116,34 @@ class ProductImage(models.Model):
                                      related_name="product_images")
     order = OrderField(unique_for_field='product_line', blank=True)
 
-    def clean(self):
+    def clean(self) -> Any:
         qs = ProductImage.objects.filter(product_line=self.product_line)
         for obj in qs:
             if self.id != obj.id and self.order == obj.order:
                 raise ValidationError("Duplicate value !!!")
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         return super(ProductImage, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         return str(self.url)
+
+
+class ProductType(models.Model):
+    title = models.CharField(max_length=100)
+    attributes = models.ManyToManyField(Attribute, through='ProductTypeAttribute',
+                                        related_name="product_type_attributes")
+
+    def __str__(self) -> CharField:
+        return self.title
+
+
+class ProductTypeAttribute(models.Model):
+    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE,
+                                     related_name="product_type_attributes_pt")
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE,
+                                  related_name="product_type_attributes_a")
+
+    class Meta:
+        unique_together = ('product_type', 'attribute')
