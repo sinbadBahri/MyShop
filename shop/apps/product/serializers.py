@@ -2,7 +2,15 @@ import modulefinder
 
 from rest_framework import serializers
 
-from .models import (Category, Brand, Product, ProductLine, ProductImage, Attribute, AttributeValue)
+from .models import (
+    Category,
+    Brand,
+    Product,
+    ProductLine,
+    ProductImage,
+    Attribute,
+    AttributeValue,
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):

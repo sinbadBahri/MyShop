@@ -1,6 +1,15 @@
 import factory
 
-from apps.product.models import Category, Brand, Product, ProductLine, ProductImage
+from apps.product.models import (
+    Category,
+    Brand,
+    Product,
+    ProductLine,
+    ProductImage,
+    ProductType,
+    Attribute,
+    AttributeValue,
+)
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -19,6 +28,29 @@ class BrandFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda x: f"Brand object {x}")
 
 
+class AttributeFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Attribute
+
+    title = "test attribute"
+    description = "lorem"
+
+
+class ProductTypeFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = ProductType
+
+    title = "test_type"
+
+    @factory.post_generation
+    def attributes(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.attributes.add(*extracted)
+
+
 class ProductFactory(factory.django.DjangoModelFactory):
 
     class Meta:
@@ -29,6 +61,16 @@ class ProductFactory(factory.django.DjangoModelFactory):
     is_active = True
     category = factory.SubFactory(CategoryFactory)
     brand = factory.SubFactory(BrandFactory)
+    product_type = factory.SubFactory(ProductTypeFactory)
+
+
+class AttributeValueFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = AttributeValue
+
+    attribute_value = "test attribute value"
+    attribute = factory.SubFactory(AttributeFactory)
 
 
 class ProductLineFactory(factory.django.DjangoModelFactory):
@@ -41,6 +83,12 @@ class ProductLineFactory(factory.django.DjangoModelFactory):
     stock_qty = 100
     product = factory.SubFactory(ProductFactory)
     is_available = True
+
+    @factory.post_generation
+    def attribute_values(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.attribute_values.add(extracted)
 
 
 class ProductImageFactory(factory.django.DjangoModelFactory):

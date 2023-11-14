@@ -24,8 +24,9 @@ class TestProductModel:
 
 
 class TestProductLineModel:
-    def test_str_method(self, product_line_factory):
-        obj = product_line_factory(sku="sku_test_1234")
+    def test_str_method(self, product_line_factory, attribute_value_factory):
+        attribute_values = attribute_value_factory(attribute_value="test value")
+        obj = product_line_factory(sku="sku_test_1234", attribute_values=attribute_values)
         assert obj.__str__() == "sku_test_1234"
 
     def test_duplicate_order_values(self, product_line_factory, product_factory):
@@ -39,3 +40,23 @@ class TestProductImageModel:
     def test_str_method(self, product_image_factory):
         obj = product_image_factory(url='test.jpg')
         assert obj.__str__() == "test.jpg"
+
+
+class TestProductTypeModel:
+    def test_str_method(self, product_type_factory, attribute_factory):
+        attribute = attribute_factory(title="test attribute")
+        obj = product_type_factory.create(title="test_type", attributes=(attribute,))
+        assert obj.__str__() == "test_type"
+
+
+class TestAttributeModel:
+    def test_str_method(self, attribute_factory):
+        obj = attribute_factory(title="test attribute")
+        assert obj.__str__() == "test attribute"
+
+
+class TestAttributeValueModel:
+    def test_str_method(self, attribute_factory, attribute_value_factory):
+        attribute = attribute_factory(title="test-attribute")
+        obj = attribute_value_factory(attribute_value="test-attribute-value", attribute=attribute)
+        assert obj.__str__() == "test-attribute:  test-attribute-value"
