@@ -1,15 +1,14 @@
-from datetime import timezone
-
-from django.db import models
 from django.core.mail import send_mail
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Permission, Group
 from django.core.validators import RegexValidator
+from django.db import models
 from django.db.models import CharField
+from django.utils import timezone
 
 from .managers import MyUserManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     """
     The User class is a custom implementation of the Django AbstractBaseUser model.
     It represents a user in the system and provides functionalities for user authentication and authorization.
@@ -56,7 +55,19 @@ class User(AbstractBaseUser):
         default=False,
         help_text="Designates whether the user can log into this admin site.",
     )
-    is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    user_permissions = models.ManyToManyField(
+        Permission,
+        blank=True,
+        related_name='auth_user_set',
+        related_query_name='user',
+    )
+    groups = models.ManyToManyField(
+        Group,
+        blank=True,
+        related_name='auth_user_set',
+        related_query_name='user',
+    )
 
     date_joined = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(null=True)

@@ -12,6 +12,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = True
 
+AUTH_USER_MODEL = 'user.User'
 
 # Application definition
 
