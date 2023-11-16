@@ -55,7 +55,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text="Designates whether the user can log into this admin site.",
     )
-    is_superuser = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(
+        default=False,
+        help_text="Designates whether the user is admin",
+        verbose_name="Is admin",
+    )
     user_permissions = models.ManyToManyField(
         Permission,
         blank=True,
@@ -76,6 +80,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    class Meta:
+        db_table = 'users'
 
     def get_full_name(self) -> str:
         """

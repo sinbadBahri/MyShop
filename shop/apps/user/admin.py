@@ -1,71 +1,80 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+from .forms import UserCreationForm, UserChangeForm
 from .models import User
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'email', 'is_superuser', 'is_staff', 'is_active']
-    list_editable = ['is_active']
-    list_filter = ['is_superuser', "is_active"]
-    search_fields = ['email', 'first_name', 'last_name']
-    list_per_page = 5
+class UserAdmin(BaseUserAdmin):
+    fieldsets = (
+        (_("User Important Info"), {
+            "fields": (
+                'email', 'first_name', 'last_name'
+            ),
+        }),
+        (_("User Password"), {
+            "fields": (
+                'password',
+            ),
+        }),
+        (_("User Permissions"), {
+            "fields": (
+                'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'
+            ),
+        }),
+        (_("Dates"), {
+            "fields": (
+                'last_login', 'date_joined'
+            ),
+        }),
+    )
 
-# @admin.register(User)
-# class MyUserAdmin(UserAdmin):
-#     fieldsets = (
-#         (_("User Important Info"), {
-#             "fields": (
-#                 'email', 'password'
-#             ),
-#         }),
-#         (_("User Full Name"), {
-#             "fields": (
-#                 'first_name', 'last_name'
-#             ),
-#         }),
-#         (_("User Permissions"), {
-#             "fields": (
-#                 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'
-#             ),
-#         }),
-#         (_("Dates"), {
-#             "fields": (
-#                 'last_login', 'date_joined'
-#             ),
-#         }),
-#     )
-#
-#     add_fieldsets = (
-#         (_("Ya Aliii"), {
-#             "classes": (
-#                 'wide',
-#             ),
-#             "fields": (
-#                 'email', 'first_name', 'last_name', 'password1', 'password2'
-#             ),
-#         }),
-#     )
-#
-#     list_display = ('email', 'is_staff', 'date_joined')
-#     search_fields = ('email__exact',)
-#     ordering = ('-id',)
-#
-#     def get_search_results(self, request, queryset, search_term):
-#         queryset, may_have_duplicates = super().get_search_results(
-#             request, queryset, search_term
-#         )
-#         try:
-#             search_term_as_int = int(search_term)
-#         except ValueError:
-#             pass
-#         else:
-#             queryset |= self.model.objects.filter(pk=search_term_as_int)
-#
-#         return queryset, may_have_duplicates
-#
-#
-# admin.site.unregister(Group)
+    add_fieldsets = (
+        (_("Creating a None Staff User"), {
+            "classes": (
+                'wide',
+            ),
+            "fields": (
+                'first_name', 'last_name','email',  'password1', 'password2', 'is_active',
+            ),
+        },),
+    )
+
+    form = UserChangeForm
+    add_form = UserCreationForm
+    list_display = ('last_name', 'email', 'is_superuser', 'is_staff', 'is_active', 'id')
+    list_editable = ('is_active',)
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    readonly_fields = ('last_login',)
+    search_fields = ('last_name', 'first_name', 'email')
+    ordering = ('last_name',)
+    list_per_page = 5
+    filter_horizontal = (
+        "groups",
+        "user_permissions",
+    )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        if not is_superuser:
+            superuser_field = form.base_fields.get('is_superuser')
+            if superuser_field:
+                superuser_field.disabled = True
+        return form
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term
+        )
+        try:
+            search_term_as_int = int(search_term)
+        except ValueError:
+            pass
+        else:
+            queryset |= self.model.objects.filter(pk=search_term_as_int)
+
+        return queryset, may_have_duplicates
