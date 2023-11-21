@@ -10,6 +10,7 @@ from apps.product.models import (
     Attribute,
     AttributeValue,
 )
+from apps.user.models import User
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -99,3 +100,15 @@ class ProductImageFactory(factory.django.DjangoModelFactory):
     alternative_text = "test alternative text"
     url = "test.jpg"
     product_line = factory.SubFactory(ProductLineFactory)
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = User
+
+    email = "test@example.com"
+    first_name = "test1"
+    last_name = "test2"
+    is_active = True
+    is_superuser = True

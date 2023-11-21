@@ -99,10 +99,5 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Email this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    def save(self, *args, **kwargs):
-        if self.email is not None and self.email.strip() == '':
-            self.email = None
-        super().save(*args, **kwargs)
-
     def __str__(self) -> CharField:
         return self.email

@@ -4,6 +4,7 @@ from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
 from .factories import (
+    # product app
     AttributeFactory,
     AttributeValueFactory,
     BrandFactory,
@@ -12,6 +13,9 @@ from .factories import (
     ProductLineFactory,
     ProductImageFactory,
     ProductTypeFactory,
+
+    # user app
+    UserFactory,
 )
 
 register(AttributeFactory)
@@ -22,6 +26,8 @@ register(ProductFactory)
 register(ProductLineFactory)
 register(ProductImageFactory)
 register(ProductTypeFactory)
+
+register(UserFactory)
 
 
 @pytest.fixture
