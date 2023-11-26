@@ -1,3 +1,4 @@
+from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -8,17 +9,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterUserSerializer
 
 
-class UserCreateAPIView(APIView):
+class UserCreateAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = RegisterUserSerializer(data=request.data)
-
-        if serializer.is_valid():
-            new_user = serializer.save()
-            if new_user:
-                Response(status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer_class = RegisterUserSerializer
 
 
 class BlackListTokenView(APIView):

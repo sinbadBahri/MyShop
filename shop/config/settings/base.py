@@ -68,15 +68,31 @@ WSGI_APPLICATION = 'config.wsgi.application'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'user_attributes': ('email', 'first_name', 'last_name'),
+            'max_similarity': 0.5
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 10,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'apps.user.validators.NumberValidator',
+    },
+    {
+        'NAME': 'apps.user.validators.UppercaseValidator',
+    },
+    {
+        'NAME': 'apps.user.validators.LowercaseValidator',
+    },
+    {
+        'NAME': 'apps.user.validators.SymbolValidator',
     },
 ]
 
