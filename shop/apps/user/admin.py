@@ -37,7 +37,7 @@ class UserAdmin(BaseUserAdmin):
                 'wide',
             ),
             "fields": (
-                'first_name', 'last_name','email',  'password1', 'password2', 'is_active',
+                'first_name', 'last_name', 'email',  'password1', 'password2', 'captcha', 'is_active',
             ),
         },),
     )

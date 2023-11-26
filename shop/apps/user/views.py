@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework import status
+from rest_framework.exceptions import Throttled
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,11 +8,21 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import RegisterUserSerializer
+from .throttle import UserLoginRateThrottle
 
 
 class UserCreateAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = RegisterUserSerializer
+    throttle_classes = (UserLoginRateThrottle,)
+
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
+
+    def throttled(self, request, wait):
+        raise Throttled(detail={
+            'message': "reCAPTCHA required"
+        })
 
 
 class BlackListTokenView(APIView):

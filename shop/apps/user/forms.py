@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
+from django_recaptcha.fields import ReCaptchaField
 
 User = get_user_model()
 
@@ -19,6 +20,8 @@ class UserCreationForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
         help_text=password_validation.password_validators_help_text_html(),
     )
+
+    captcha = ReCaptchaField()
 
     error_messages = {
         'mismatch': "Passwords did not match"

@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.product import views
 from apps.user.views import UserCreateAPIView
 
+
 router = DefaultRouter()
 router.register(r"categories", views.CategoryViewSet)
 router.register(r"brands", views.BrandViewSet)
