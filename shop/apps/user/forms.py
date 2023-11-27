@@ -50,6 +50,8 @@ class UserChangeForm(forms.ModelForm):
         help_text='you can change password using <a href="../password/">this link</a>'
     )
 
+    captcha = ReCaptchaField()
+
     class Meta:
         model = User
         fields = (

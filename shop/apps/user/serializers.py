@@ -6,8 +6,11 @@ User = get_user_model()
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True,
-                                     validators=[password_validation.validate_password])
+    password = serializers.CharField(
+        write_only=True, required=True,
+        help_text=password_validation.password_validators_help_text_html(),
+        validators=[password_validation.validate_password]
+    )
     confirm_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:

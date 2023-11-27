@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
 RECAPTCHA_PUBLIC_KEY = '6LeKNh0pAAAAACcgBn8-50i53gty6veeBA7lA5uR'
 RECAPTCHA_PRIVATE_KEY = '6LeKNh0pAAAAACzDsDWoezKUFxV_zfNQhL2LdANo'
-RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
 
 MIDDLEWARE = [
@@ -142,7 +141,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_THROTTLE_RATES':{
+    'DEFAULT_THROTTLE_RATES': {
         'anon': '500/minute',
         'user': '1000/minute',
         'loginAttempts': '3/hr',
