@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Internal Apps
     'apps.product',
     'apps.user',
+    'apps.finance',
 ]
 
 # reCaptcha Keys
@@ -170,3 +171,13 @@ AXES_FAILURE_LIMIT = 3  # How many times a user can fail a login
 AXES_COOLOFF_TIME = 1  # How much time should a user wait before attempting to login again
 
 AXES_RESET_ON_SUCCESS = True  # Reset failed login attempts
+
+# payments
+
+ZARRINPAL_MERCHANT_ID = "1344b5d4-0048-11e8-94db-005056a205be"
+
+ZARRINPAL = {
+    'gateway_request_url': 'https://www.zarinpal.com/pg/services/WebGate/wsdl',
+    'gateway_callback_url': 'http://127.0.0.1:8000/finance/verify/',
+    'merchant_id': "1344b5d4-0048-11e8-94db-005056a205be",
+}

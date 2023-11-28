@@ -52,6 +52,7 @@ six==1.16.0
 social-auth-app-django==5.4.0
 social-auth-core==4.5.0
 sqlparse==0.4.4
+suds==1.1.2
 typing_extensions==4.8.0
 uritemplate==4.1.1
 urllib3==2.1.0
