@@ -103,3 +103,26 @@ class Payment(models.Model):
 
     def status_changed(self):
         return self.is_paid != self._b_is_paid
+
+    def verify(self, data):
+        handler = self.gateway.get_verify_handler()
+
+        if not self.is_paid and handler is not None:
+            handler(self, data)
+
+        return self.is_paid
+
+    def get_gateway(self):
+        gateway = Gateway.objects.filter(is_enable=True).first()
+        return gateway.gateway_code
+
+    def save_log(self, data, scope='Request handler', save=True):
+        generated_log = "test log"
+
+        if self.payment_log != "":
+            self.payment_log += generated_log
+        else:
+            self.payment_log = generated_log
+
+        if save:
+            self.save()
