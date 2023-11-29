@@ -16,6 +16,6 @@ def zarinpal_request_handler(merchant_id, amount, description, email, mobile, ca
 
 def zarinpal_peyment_checker(merchant_id, amount, authority):
     client = Client(settings.ZARRINPAL['gateway_request_url'])
-    result = client.service.PeymentVerification(merchant_id, amount, authority)
+    result = client.service.PaymentVerification(merchant_id, amount, authority)
     is_paid = True if result.Status in [100, 101] else False
     return is_paid, result.RefID

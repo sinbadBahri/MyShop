@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from .forms import ChargeWalletForm
-from .utils.zarinpal import zarinpal_request_handler
+from .utils.zarinpal import zarinpal_request_handler, zarinpal_peyment_checker
 
 
 class ChargeWalletView(View):
@@ -43,14 +43,14 @@ class ChargeWalletView(View):
 
 
 
- # ***********************      Test     **********************
+ # ***********************      Test verify function-based view  **********************
 
 
 MMERCHANT_ID = "1344b5d4-0048-11e8-94db-005056a205be"  # Required
 ZARINPAL_WEBSERVICE = 'https://www.zarinpal.com/pg/services/WebGate/wsdl'  # Required
 amount = 15000  # Amount will be based on Toman  Required
-description = 'توضیحات تراکنش تستی'  # Required
-email = 'user@userurl.ir'  # Optional
+description = 'smth'  # Required
+email = 'user@example.com'  # Optional
 mobile = '09123456789'  # Optional
 CallbackURL = 'http://127.0.0.1:8000/finance/verify/'
 
@@ -71,3 +71,19 @@ def verify(request):
             return HttpResponse('Transaction failed. Status: ' + str(result.Status))
     else:
         return HttpResponse('Transaction failed or canceled by user')
+
+
+
+
+ # ***********************      Test Verify class-based view  **********************
+class VerifyView(View):
+    template_name = 'callback.html'
+
+    def get(self, request, *args, **kwargs):
+        authority = request.GET.get('Authority')
+        is_paid, ref_id = zarinpal_peyment_checker(
+            settings.ZARRINPAL['merchant_id'], 31206, authority
+        )
+        context = {'is_paid': is_paid, 'ref_id': ref_id}
+
+        return render(request, self.template_name, context=context)
