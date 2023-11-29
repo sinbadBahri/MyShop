@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from .forms import ChargeWalletForm
-from .utils.zarinpal import zarinpal_request_handler, zarinpal_peyment_checker
+from .utils.zarinpal import zarrinpal_request_handler, zarrinpal_payment_checker
 
 
 class ChargeWalletView(View):
@@ -24,7 +24,7 @@ class ChargeWalletView(View):
         # 3
         if form.is_valid():
             amount = form.cleaned_data['amount']
-            payment_link, authority = zarinpal_request_handler(
+            payment_link, authority = zarrinpal_request_handler(
                         MMERCHANT_ID,
                         amount,
                         description,
@@ -81,7 +81,7 @@ class VerifyView(View):
 
     def get(self, request, *args, **kwargs):
         authority = request.GET.get('Authority')
-        is_paid, ref_id = zarinpal_peyment_checker(
+        is_paid, ref_id = zarrinpal_payment_checker(
             settings.ZARRINPAL['merchant_id'], 31206, authority
         )
         context = {'is_paid': is_paid, 'ref_id': ref_id}

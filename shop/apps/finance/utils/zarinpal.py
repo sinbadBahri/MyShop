@@ -2,7 +2,7 @@ from django.conf import settings
 from suds.client import Client
 
 
-def zarinpal_request_handler(merchant_id, amount, description, email, mobile, callback_url):
+def zarrinpal_request_handler(merchant_id, amount, description, email, mobile, callback_url):
     client = Client(settings.ZARRINPAL['gateway_request_url'])
     result = client.service.PaymentRequest(
         merchant_id, amount, description, email, mobile, callback_url
@@ -14,7 +14,7 @@ def zarinpal_request_handler(merchant_id, amount, description, email, mobile, ca
         return None, None
 
 
-def zarinpal_peyment_checker(merchant_id, amount, authority):
+def zarrinpal_payment_checker(merchant_id, amount, authority):
     client = Client(settings.ZARRINPAL['gateway_request_url'])
     result = client.service.PaymentVerification(merchant_id, amount, authority)
     is_paid = True if result.Status in [100, 101] else False
