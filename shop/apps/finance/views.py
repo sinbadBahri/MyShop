@@ -1,9 +1,10 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.views import View
 
 from .forms import ChargeWalletForm
+from .models import Payment, Gateway
 from .utils.zarinpal import zarrinpal_request_handler, zarrinpal_payment_checker
 
 
@@ -41,11 +42,7 @@ class ChargeWalletView(View):
         return render(request, self.template_name, {'form': form})
 
 
-
-
- # ***********************      Test verify function-based view  **********************
-
-
+# *************************     Test verify function-based view      **************************
 MMERCHANT_ID = "1344b5d4-0048-11e8-94db-005056a205be"  # Required
 ZARINPAL_WEBSERVICE = 'https://www.zarinpal.com/pg/services/WebGate/wsdl'  # Required
 amount = 15000  # Amount will be based on Toman  Required
@@ -73,17 +70,43 @@ def verify(request):
         return HttpResponse('Transaction failed or canceled by user')
 
 
+# *************************     Test Verify class-based view     ************************
+#
+# class VerifyView(View):
+#     template_name = 'callback.html'
+#
+#     def get(self, request, *args, **kwargs):
+#         authority = request.GET.get('Authority')
+#         is_paid, ref_id = zarrinpal_payment_checker(
+#             settings.ZARRINPAL['merchant_id'], 31206, authority
+#         )
+#         context = {'is_paid': is_paid, 'ref_id': ref_id}
+#
+#         return render(request, self.template_name, context=context)
 
 
- # ***********************      Test Verify class-based view  **********************
-class VerifyView(View):
-    template_name = 'callback.html'
+class PaymentView(View):
+    template_name = 'payment.html'
 
-    def get(self, request, *args, **kwargs):
-        authority = request.GET.get('Authority')
-        is_paid, ref_id = zarrinpal_payment_checker(
-            settings.ZARRINPAL['merchant_id'], 31206, authority
-        )
-        context = {'is_paid': is_paid, 'ref_id': ref_id}
+    def get(self, request, invoice_number, *args, **kwargs):
+        try:
+            payment = Payment.objects.get(invoice_number=invoice_number)
+        except Payment.DoesNotExist:
+            raise Http404
 
-        return render(request, self.template_name, context=context)
+        gateways = Gateway.objects.filter(is_enable=True)
+
+        return render(request, self.template_name, {'payment': payment, 'gateways': gateways})
+
+
+class PaymentGatewayView(View):
+    def get(self, request, invoice_number, gateway_code, *args, **kwargs):
+        try:
+            payment = Payment.objects.get(invoice_number=invoice_number)
+        except Payment.DoesNotExist:
+            raise Http404
+
+        try:
+            payment = Gateway.objects.get(gateway_code=gateway_code)
+        except Payment.DoesNotExist:
+            raise Http404

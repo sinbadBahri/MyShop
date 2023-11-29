@@ -10,10 +10,12 @@
 <body>
     Halim:
     {% if purchase %}
-    Purchase Number : {{purchase.id}} created--------
-    Purchase Price : {{purchase.price}}----------
-    Purchase Status : {{purchase.get_status_display}}
+    <p>Purchase Number : {{purchase.id}} created</p>
+    <p>Purchase Price : {{purchase.price}}</p>
+    <p>Purchase Status : {{purchase.get_status_display}}</p>
+    <a href="{% url 'payment' purchase.payment.invoice_number %}">buy mother fucker</a>
     {% else %}
+    <p>Purchase Not Created</p>
     {% endif %}
 
 </body>
