@@ -22,7 +22,7 @@
 </h1>
 <h2>
     {% for gateway in gateways %}
-    <p>{{gateway.title}}</p>
+    <p><a href="{% url 'payment-gateway' payment.invoice_number gateway.gateway_code %}">{{gateway.title}}</a></p>
     {% endfor %}
 </h2>
 
