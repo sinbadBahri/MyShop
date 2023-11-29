@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import ChargeWalletView, verify, VerifyView
 
+# temp
 urlpatterns = [
     path('charge/', ChargeWalletView.as_view(), name="charge"),
     path('verify/', verify,  name="verify"),

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'apps.product',
     'apps.user',
     'apps.finance',
+    'apps.purchase'
 ]
 
 # reCaptcha Keys
