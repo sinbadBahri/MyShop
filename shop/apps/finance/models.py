@@ -125,7 +125,7 @@ class Payment(models.Model):
         handler = self.gateway.get_verify_handler()
 
         if not self.is_paid and handler is not None:
-            handler(self, data)
+            self.is_paid, ref_id = handler(**data)
 
         return self.is_paid
 
